@@ -7,13 +7,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArticleApi.WebApi", "Articl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArticleApi.DAL", "ArticleApi.DAL\ArticleApi.DAL.csproj", "{41416D95-93B7-4493-B2C7-4A4485B7DAB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArticleApi.Core", "ArticleApi.Core\ArticleApi.Core.csproj", "{B4C0051A-4935-44B0-9727-E22BC77B3353}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArticleApi.Core", "ArticleApi.Core\ArticleApi.Core.csproj", "{B4C0051A-4935-44B0-9727-E22BC77B3353}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArticleApi.Common", "ArticleApi.Common\ArticleApi.Common.csproj", "{1D7B950A-1670-4F5A-9142-C17B0FA9BE19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArticleApi.Common", "ArticleApi.Common\ArticleApi.Common.csproj", "{1D7B950A-1670-4F5A-9142-C17B0FA9BE19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArticleApi.Data", "ArticleApi.Data\ArticleApi.Data.csproj", "{CAF4E775-7453-460E-AAC1-B134C453CE6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArticleApi.Data", "ArticleApi.Data\ArticleApi.Data.csproj", "{CAF4E775-7453-460E-AAC1-B134C453CE6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArticleApi.Business", "ArticleApi.Business\ArticleApi.Business.csproj", "{A6A7B103-CAEE-4C92-96AF-4C6D5B823549}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArticleApi.Business", "ArticleApi.Business\ArticleApi.Business.csproj", "{A6A7B103-CAEE-4C92-96AF-4C6D5B823549}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DbScripts", "DbScripts", "{D700DF89-6C5F-4FEE-B6C4-DFDA0695A014}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\Vegeta\Documents\ArticleApiDb.sql = C:\Users\Vegeta\Documents\ArticleApiDb.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
