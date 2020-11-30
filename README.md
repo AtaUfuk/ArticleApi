@@ -13,3 +13,9 @@ Makale ve ilgili bilgilere ait işlemlerin yapıldığı örnek bir restapi proj
   &nbsp;&nbsp;&nbsp;b)Swagger<br/>
  3) Daha geniş bir vaktim olsaydı ön yüzde son kullanıcıya gösterilen modelleri direk entity classları yerine ayrı modeller oluşturarak yapardım. Herhangi bir ekleme/güncelleme işleminde öncelikli olarak girilen verilerin zararlı içerik olup olmadığının kontrollerini yazardım.(Örneğin: Makale ekleme esnasında tüm string verilerde özel karakter girilip girilmediğinin kontrolü vb.) foreign key bulunan tablolarda öncelikli olarak bu key bilgisine ait bağlı bulunduğu tabloda var olup olmadığını kontrol ettikten sonra gerekli işlemlere devam ederdim. Güvenlik amacıyla Sunucu bilgisinin response header üzerinden kaldırılmasını sağlardım.<br/>
  4) Şu anda herhangi bir yorumum yoktur.
+ 5) Proje veritabanı var olan içerikler ile birlikte scripti oluşturulduğundan oturum açmak için bir kullanıcı hazır bulunmaktadır. Bu kullanıcıya ait bilgiler ise; <br/>
+ {<br/>
+ "email": "ufukata34@gmail.com",<br/>
+"password": "123" <br/>
+}<br/>
+oturum açma metodunun çağırıldığı link ise domain_adresi/user-operations/login
