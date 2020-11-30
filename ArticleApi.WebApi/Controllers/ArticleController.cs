@@ -7,11 +7,11 @@ using ArticleApi.WebApi.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using static ArticleApi.Common.Utilities.Layers;
+using System.Linq;
 
 namespace ArticleApi.WebApi.Controllers
 {
@@ -22,12 +22,14 @@ namespace ArticleApi.WebApi.Controllers
         private readonly IArticlesService _article;
         private readonly ILogsService _logs;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IMemoryCache _memcache;
 
-        public ArticleController(IArticlesService article, ILogsService logs, IHttpContextAccessor httpContext)
+        public ArticleController(IArticlesService article, ILogsService logs, IHttpContextAccessor httpContext, IMemoryCache memcache)
         {
             _article = article;
             _logs = logs;
             _httpContext = httpContext;
+            _memcache = memcache;
         }
         [Route("get-by-id")]
         [HttpGet]
@@ -41,11 +43,32 @@ namespace ArticleApi.WebApi.Controllers
             Articles resultobj = null;
             try
             {
-                var result = _article.GetById(id, userInfo);
-                resultcode = result.ResultCode;
-                resultmessage = result.Message;
-                resultval = result.IsSuccess;
-                resultobj = result.Object;
+                _memcache.TryGetValue<Articles>("Article" + id, out resultobj);
+                if (resultobj == null)
+                {
+                    var result = _article.GetById(id, userInfo);
+                    resultcode = result.ResultCode;
+                    resultmessage = result.Message;
+                    resultval = result.IsSuccess;
+                    resultobj = result.Object;
+                    if (result.IsSuccess && result.Object != null)
+                    {
+                        var cacheExpOptions = new MemoryCacheEntryOptions
+                        {
+                            AbsoluteExpiration = DateTime.Now.AddMinutes(10),
+                            Priority = CacheItemPriority.Normal
+                        };
+                        _memcache.Set<Articles>("Article" + id, resultobj, cacheExpOptions);
+                    }
+                }
+                else
+                {
+                    resultobj.Title += "-Mem";
+                    resultcode = StaticValues.SuccessCode;
+                    resultmessage = StaticValues.SuccessMessage;
+                    resultval = true;
+                }
+
             }
             catch (Exception ex)
             {
@@ -56,7 +79,7 @@ namespace ArticleApi.WebApi.Controllers
         [Route("insert-article")]
         [HttpPost]
         [Authorize]
-        public IResult AddArticle([FromBody]Articles model)
+        public IResult AddArticle([FromBody] Articles model)
         {
             AutUserInfo userInfo = _httpContext.HttpContext.Session.GetObject<AutUserInfo>("UserInfo");
             string resultmessage = StaticValues.ErrorMessage;
@@ -64,10 +87,12 @@ namespace ArticleApi.WebApi.Controllers
             bool resultval = false;
             try
             {
+                _logs.Add(userInfo.SessId, string.Format("Makale ekleme işlemi ekli parametreler ile başlamıştır.{0}", Reflections.GetModelPropertyValues<Articles>(model)), "AddArticle", "ArticleController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
                 var result = _article.Add(model, userInfo);
                 resultcode = result.ResultCode;
                 resultmessage = result.Message;
                 resultval = result.IsSuccess;
+                _logs.Add(userInfo.SessId, string.Format("Makale ekleme işlemi tamamlanmıştır.Sonuç={0}", (resultval ? "Başarılı" : "Hatalı")), "AddArticle", "ArticleController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
             }
             catch (Exception ex)
             {
@@ -86,10 +111,20 @@ namespace ArticleApi.WebApi.Controllers
             bool resultval = false;
             try
             {
+                model.ModifiedDate = DateTime.Now;
+                model.ModifiedUserId = userInfo.UsrId;
                 var result = _article.Update(model, userInfo);
                 resultcode = result.ResultCode;
                 resultmessage = result.Message;
                 resultval = result.IsSuccess;
+                if (resultval)
+                {
+                    if (_memcache.TryGetValue("Article" + model.Id, out Articles val))
+                    {
+                        _memcache.Remove("Article" + model.Id);
+                        _memcache.Set<Articles>("Article" + model.Id, model);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -112,6 +147,13 @@ namespace ArticleApi.WebApi.Controllers
                 resultcode = result.ResultCode;
                 resultmessage = result.Message;
                 resultval = result.IsSuccess;
+                if(resultval)
+                {
+                    if(_memcache.TryGetValue("Article" + id, out Articles val))
+                    {
+                        _memcache.Remove("Article" + id);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -120,7 +162,7 @@ namespace ArticleApi.WebApi.Controllers
             return new Result(resultval, resultmessage, resultcode);
         }
 
-        [Route("get-by-writer")]
+        [Route("get-list-by-writer")]
         [HttpGet]
         [Authorize]
         public IObjResult<List<Articles>> GetByWriterId([FromBody] int writerid)
@@ -130,13 +172,28 @@ namespace ArticleApi.WebApi.Controllers
             int resultcode = StaticValues.ErrorCode;
             bool resultval = false;
             List<Articles> resultobj = null;
+            _memcache.TryGetValue<List<Articles>>("ArticlesByWriters" + writerid, out resultobj);
             try
             {
-                var result = _article.GetListByWriter(writerid, userInfo);
-                resultcode = result.ResultCode;
-                resultmessage = result.Message;
-                resultval = result.IsSuccess;
-                resultobj = result.Object;
+                if (resultobj == null)
+                {
+                    var result = _article.GetListByWriter(writerid, userInfo);
+                    resultcode = result.ResultCode;
+                    resultmessage = result.Message;
+                    resultval = result.IsSuccess;
+                    resultobj = result.Object;
+                    if (result.IsSuccess)
+                    {
+                        _memcache.Set<List<Articles>>("ArticlesByWriters" + writerid, resultobj);
+                    }
+                }
+                else
+                {
+                    resultcode = StaticValues.SuccessCode;
+                    resultmessage = StaticValues.SuccessMessage;
+                    resultval = true;
+                }
+
             }
             catch (Exception ex)
             {

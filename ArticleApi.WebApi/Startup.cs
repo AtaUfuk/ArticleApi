@@ -61,6 +61,7 @@ namespace ArticleApi.WebApi
                 });
             });
             services.AddHttpContextAccessor();
+            services.AddMemoryCache();
             services.AddDistributedMemoryCache();
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
             services.AddSession(options =>
@@ -110,7 +111,6 @@ namespace ArticleApi.WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ArticleApi.WebApi v1"));
             }   
-
             app.UseHttpsRedirection();
             app.UseResponseCompression();
             app.UseSession();

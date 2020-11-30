@@ -7,6 +7,7 @@ using ArticleApi.WebApi.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using static ArticleApi.Common.Utilities.Layers;
@@ -20,12 +21,14 @@ namespace WriterApi.WebApi.Controllers
         private readonly IWritersService _writer;
         private readonly ILogsService _logs;
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IMemoryCache _memcache;
 
-        public WritersController(IWritersService writer, ILogsService logs, IHttpContextAccessor httpContext)
+        public WritersController(IWritersService writer, ILogsService logs, IHttpContextAccessor httpContext, IMemoryCache memcache)
         {
             _writer = writer;
             _logs = logs;
             _httpContext = httpContext;
+            _memcache = memcache;
         }
         [Route("get-by-id")]
         [HttpGet]
@@ -39,11 +42,25 @@ namespace WriterApi.WebApi.Controllers
             Writers resultobj = null;
             try
             {
-                var result = _writer.GetById(id, userInfo);
-                resultcode = result.ResultCode;
-                resultmessage = result.Message;
-                resultval = result.IsSuccess;
-                resultobj = result.Object;
+                if (!_memcache.TryGetValue<Writers>("Writer" + id, out resultobj))
+                {
+                    var result = _writer.GetById(id, userInfo);
+                    resultcode = result.ResultCode;
+                    resultmessage = result.Message;
+                    resultval = result.IsSuccess;
+                    resultobj = result.Object;
+                    if (resultval)
+                    {
+                        _memcache.Set<Writers>("Writer" + id, resultobj);
+                    }
+                }
+                else
+                {
+                    resultcode = StaticValues.SuccessCode;
+                    resultmessage = StaticValues.SuccessMessage;
+                    resultval = true;
+                }
+
             }
             catch (Exception ex)
             {
@@ -54,7 +71,7 @@ namespace WriterApi.WebApi.Controllers
         [Route("insert-writer")]
         [HttpPost]
         [Authorize]
-        public IResult AddWriter([FromBody]Writers model)
+        public IResult AddWriter([FromBody] Writers model)
         {
             AutUserInfo userInfo = _httpContext.HttpContext.Session.GetObject<AutUserInfo>("UserInfo");
             string resultmessage = StaticValues.ErrorMessage;

@@ -2,6 +2,9 @@
 {
     public static class Layers
     {
+        /// <summary>
+        /// Projede kullanılan katmanların tanımlandığı bölümdür
+        /// </summary>
         public enum LayerInfo 
         {
             WebUI=1,

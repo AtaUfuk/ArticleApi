@@ -86,7 +86,7 @@ namespace ArticleApi.Business.Managers
             Articles _resultentity = null;
             try
             {
-                _resultentity = _repos.Get(x => x.Id == id);
+                _resultentity = _repos.Get(x => x.Id == id && x.Active && !x.Deleted);
                 if (_resultentity != null)
                 {
                     _code = StaticValues.SuccessCode;
@@ -116,7 +116,7 @@ namespace ArticleApi.Business.Managers
             List<Articles> _resultentity = null;
             try
             {
-                _resultentity = _repos.GetList(x => x.WriterId == writerid);
+                _resultentity = _repos.GetList(x => x.WriterId == writerid && x.Active && !x.Deleted);
                 if (_resultentity != null)
                 {
                     _code = StaticValues.SuccessCode;
@@ -148,8 +148,6 @@ namespace ArticleApi.Business.Managers
                 Articles entity = _repos.Get(x => x.Id == model.Id);
                 if (entity != null)
                 {
-                    entity.ModifiedDate = DateTime.Now;
-                    entity.ModifiedUserId = userInfo.UsrId;
                     _repos.Update(model);
                     _code = StaticValues.SuccessCode;
                     _resultMessage = StaticValues.SuccessMessage;

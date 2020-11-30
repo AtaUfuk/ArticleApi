@@ -12,7 +12,6 @@ namespace ArticleApi.DAL.DataMap
             builder.Property(x => x.Name).HasMaxLength(255);
             builder.Property(x => x.LastName).HasMaxLength(255);
             builder.Property(x => x.Email).HasMaxLength(255);
-            builder.Property(x => x.Password).HasMaxLength(256);
             builder.Property(x => x.Active);
             builder.Property(x => x.Deleted);
             builder.Property(x => x.CreatedDate).HasDefaultValueSql("GETDATE()");

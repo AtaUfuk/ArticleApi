@@ -100,13 +100,13 @@
         /// </summary>
         public static readonly int ErrorNullObjCode = 110;
         /// <summary>
-        /// Bilgi amaçlı oluşturulan veriler için kullanılan koddur.
-        /// </summary>
-        public static readonly int InfoCode = 201;
-        /// <summary>
         /// Başarılı işlem sonuç kodudur.
         /// </summary>
         public static readonly int SuccessCode = 200;
+        /// <summary>
+        /// Bilgi amaçlı oluşturulan veriler için kullanılan koddur.
+        /// </summary>
+        public static readonly int InfoCode = 201;
         #endregion
 
         #region Default Degerler

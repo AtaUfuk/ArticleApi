@@ -86,7 +86,7 @@ namespace ArticleApi.Business.Managers
             Writers _resultentity = null;
             try
             {
-                _resultentity = _repos.Get(x => x.Id == id);
+                _resultentity = _repos.Get(x => x.Id == id && x.Active && !x.Deleted);
                 if (_resultentity != null)
                 {
                     _code = StaticValues.SuccessCode;
