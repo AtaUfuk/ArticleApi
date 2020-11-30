@@ -20,6 +20,10 @@ namespace ArticleApi.Business.DependecyResolvers.Autofac
             builder.RegisterType<WritersDal>().As<IWritersDal>();
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<UsersDal>().As<IUsersDal>();
+            builder.RegisterType<CommentersDal>().As<ICommentersDal>();
+            builder.RegisterType<CommentersManager>().As<ICommentersService>();
+            builder.RegisterType<CommentsManager>().As<ICommentersService>();
+            builder.RegisterType<CommentsDal>().As<ICommentsDal>();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
             builder.RegisterType<HttpContextAccessor>().As<IHttpContextAccessor>();
         }

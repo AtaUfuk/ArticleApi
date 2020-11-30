@@ -6,6 +6,7 @@ namespace ArticleApi.Data.Entities.Concrete
     public class Comments : IEntity
     {
         public int Id { get; set; }
+        public int ArticleId { get; set; }
         public int CommenterId { get; set; }
         public string Content { get; set; }
         public bool Active { get; set; }

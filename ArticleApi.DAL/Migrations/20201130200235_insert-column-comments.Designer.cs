@@ -4,14 +4,16 @@ using ArticleApi.DAL.Concrete.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ArticleApi.DAL.Migrations
 {
     [DbContext(typeof(ArticleApiDbContext))]
-    partial class ArticleApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201130200235_insert-column-comments")]
+    partial class insertcolumncomments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

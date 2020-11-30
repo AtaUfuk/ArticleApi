@@ -13,20 +13,20 @@ using System.Collections.Generic;
 using static ArticleApi.Common.Utilities.Layers;
 using System.Linq;
 
-namespace ArticleApi.WebApi.Controllers
+namespace CommentsApi.WebApi.Controllers
 {
-    [Route("article-operations")]
+    [Route("comment-operations")]
     [ApiController]
-    public class ArticleController : ControllerBase
+    public class CommentsController : ControllerBase
     {
-        private readonly IArticlesService _article;
+        private readonly ICommentsService _comment;
         private readonly ILogsService _logs;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IMemoryCache _memcache;
 
-        public ArticleController(IArticlesService article, ILogsService logs, IHttpContextAccessor httpContext, IMemoryCache memcache)
+        public CommentsController(ICommentsService comment, ILogsService logs, IHttpContextAccessor httpContext, IMemoryCache memcache)
         {
-            _article = article;
+            _comment = comment;
             _logs = logs;
             _httpContext = httpContext;
             _memcache = memcache;
@@ -34,19 +34,19 @@ namespace ArticleApi.WebApi.Controllers
         [Route("get-by-id")]
         [HttpGet]
         [Authorize]
-        public IObjResult<Articles> GetArticle(int id)
+        public IObjResult<Comments> GetComments(int id)
         {
             AutUserInfo userInfo = _httpContext.HttpContext.Session.GetObject<AutUserInfo>("UserInfo");
             string resultmessage = StaticValues.ErrorMessage;
             int resultcode = StaticValues.ErrorCode;
             bool resultval = false;
-            Articles resultobj = null;
+            Comments resultobj = null;
             try
             {
-                _memcache.TryGetValue<Articles>("Article" + id, out resultobj);
+                _memcache.TryGetValue<Comments>("Comments" + id, out resultobj);
                 if (resultobj == null)
                 {
-                    var result = _article.GetById(id, userInfo);
+                    var result = _comment.GetById(id, userInfo);
                     resultcode = result.ResultCode;
                     resultmessage = result.Message;
                     resultval = result.IsSuccess;
@@ -58,12 +58,11 @@ namespace ArticleApi.WebApi.Controllers
                             AbsoluteExpiration = DateTime.Now.AddMinutes(10),
                             Priority = CacheItemPriority.Normal
                         };
-                        _memcache.Set<Articles>("Article" + id, resultobj, cacheExpOptions);
+                        _memcache.Set<Comments>("Comments" + id, resultobj, cacheExpOptions);
                     }
                 }
                 else
                 {
-                    resultobj.Title += "-Mem";
                     resultcode = StaticValues.SuccessCode;
                     resultmessage = StaticValues.SuccessMessage;
                     resultval = true;
@@ -72,14 +71,14 @@ namespace ArticleApi.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                _logs.Add(userInfo.SessId, ex.ToString(), "GetArticle", "ArticleController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
+                _logs.Add(userInfo.SessId, ex.ToString(), "GetComments", "CommentsController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
             }
-            return new ObjResult<Articles>(resultval, resultmessage, resultcode, resultobj);
+            return new ObjResult<Comments>(resultval, resultmessage, resultcode, resultobj);
         }
-        [Route("insert-article")]
+        [Route("insert-comment")]
         [HttpPost]
         [Authorize]
-        public IResult AddArticle([FromBody] Articles model)
+        public IResult AddComments([FromBody] Comments model)
         {
             AutUserInfo userInfo = _httpContext.HttpContext.Session.GetObject<AutUserInfo>("UserInfo");
             string resultmessage = StaticValues.ErrorMessage;
@@ -87,23 +86,23 @@ namespace ArticleApi.WebApi.Controllers
             bool resultval = false;
             try
             {
-                _logs.Add(userInfo.SessId, string.Format("Makale ekleme işlemi ekli parametreler ile başlamıştır.{0}", Reflections.GetModelPropertyValues<Articles>(model)), "AddArticle", "ArticleController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
-                var result = _article.Add(model, userInfo);
+                _logs.Add(userInfo.SessId, string.Format("Makale ekleme işlemi ekli parametreler ile başlamıştır.{0}", Reflections.GetModelPropertyValues<Comments>(model)), "AddComments", "CommentsController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
+                var result = _comment.Add(model, userInfo);
                 resultcode = result.ResultCode;
                 resultmessage = result.Message;
                 resultval = result.IsSuccess;
-                _logs.Add(userInfo.SessId, string.Format("Makale ekleme işlemi tamamlanmıştır.Sonuç={0}", (resultval ? "Başarılı" : "Hatalı")), "AddArticle", "ArticleController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
+                _logs.Add(userInfo.SessId, string.Format("Makale ekleme işlemi tamamlanmıştır.Sonuç={0}", (resultval ? "Başarılı" : "Hatalı")), "AddComments", "CommentsController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
             }
             catch (Exception ex)
             {
-                _logs.Add(userInfo.SessId, ex.ToString(), "AddArticle", "ArticleController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
+                _logs.Add(userInfo.SessId, ex.ToString(), "AddComments", "CommentsController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
             }
             return new Result(resultval, resultmessage, resultcode);
         }
-        [Route("update-article")]
+        [Route("update-comment")]
         [HttpPost]
         [Authorize]
-        public IResult UpdateArticle([FromBody] Articles model)
+        public IResult UpdateComments([FromBody] Comments model)
         {
             AutUserInfo userInfo = _httpContext.HttpContext.Session.GetObject<AutUserInfo>("UserInfo");
             string resultmessage = StaticValues.ErrorMessage;
@@ -113,29 +112,29 @@ namespace ArticleApi.WebApi.Controllers
             {
                 model.ModifiedDate = DateTime.Now;
                 model.ModifiedUserId = userInfo.UsrId;
-                var result = _article.Update(model, userInfo);
+                var result = _comment.Update(model, userInfo);
                 resultcode = result.ResultCode;
                 resultmessage = result.Message;
                 resultval = result.IsSuccess;
                 if (resultval)
                 {
-                    if (_memcache.TryGetValue("Article" + model.Id, out Articles val))
+                    if (_memcache.TryGetValue("Comments" + model.Id, out Comments val))
                     {
-                        _memcache.Remove("Article" + model.Id);
-                        _memcache.Set<Articles>("Article" + model.Id, model);
+                        _memcache.Remove("Comments" + model.Id);
+                        _memcache.Set<Comments>("Comments" + model.Id, model);
                     }
                 }
             }
             catch (Exception ex)
             {
-                _logs.Add(userInfo.SessId, ex.ToString(), "UpdateArticle", "ArticleController", Enum.GetName(typeof(LayerInfo), 1), _httpContext.HttpContext.Request.Path, userInfo.ClientIp, userInfo.UsrId);
+                _logs.Add(userInfo.SessId, ex.ToString(), "UpdateComments", "CommentsController", Enum.GetName(typeof(LayerInfo), 1), _httpContext.HttpContext.Request.Path, userInfo.ClientIp, userInfo.UsrId);
             }
             return new Result(resultval, resultmessage, resultcode);
         }
-        [Route("delete-article")]
+        [Route("delete-comment")]
         [HttpPost]
         [Authorize]
-        public IResult DeleteArticle([FromBody] int id)
+        public IResult DeleteComments([FromBody] int id)
         {
             AutUserInfo userInfo = _httpContext.HttpContext.Session.GetObject<AutUserInfo>("UserInfo");
             string resultmessage = StaticValues.ErrorMessage;
@@ -143,21 +142,21 @@ namespace ArticleApi.WebApi.Controllers
             bool resultval = false;
             try
             {
-                var result = _article.Delete(id, userInfo);
+                var result = _comment.Delete(id, userInfo);
                 resultcode = result.ResultCode;
                 resultmessage = result.Message;
                 resultval = result.IsSuccess;
                 if(resultval)
                 {
-                    if(_memcache.TryGetValue("Article" + id, out Articles val))
+                    if(_memcache.TryGetValue("Comments" + id, out Comments val))
                     {
-                        _memcache.Remove("Article" + id);
+                        _memcache.Remove("Comments" + id);
                     }
                 }
             }
             catch (Exception ex)
             {
-                _logs.Add(userInfo.SessId, ex.ToString(), "DeleteArticle", "ArticleController", Enum.GetName(typeof(LayerInfo), 1), _httpContext.HttpContext.Request.Path, userInfo.ClientIp, userInfo.UsrId);
+                _logs.Add(userInfo.SessId, ex.ToString(), "DeleteComments", "CommentsController", Enum.GetName(typeof(LayerInfo), 1), _httpContext.HttpContext.Request.Path, userInfo.ClientIp, userInfo.UsrId);
             }
             return new Result(resultval, resultmessage, resultcode);
         }
@@ -165,26 +164,26 @@ namespace ArticleApi.WebApi.Controllers
         [Route("get-list-by-writer")]
         [HttpGet]
         [Authorize]
-        public IObjResult<List<Articles>> GetListByWriterId([FromBody] int writerid)
+        public IObjResult<List<Comments>> GetListByArticleId([FromBody] int articleid)
         {
             AutUserInfo userInfo = _httpContext.HttpContext.Session.GetObject<AutUserInfo>("UserInfo");
             string resultmessage = StaticValues.ErrorMessage;
             int resultcode = StaticValues.ErrorCode;
             bool resultval = false;
-            List<Articles> resultobj = null;
-            _memcache.TryGetValue<List<Articles>>("ArticlesByWriters" + writerid, out resultobj);
+            List<Comments> resultobj = null;
+            _memcache.TryGetValue<List<Comments>>("CommentsByWriters" + articleid, out resultobj);
             try
             {
                 if (resultobj == null)
                 {
-                    var result = _article.GetListByWriter(writerid, userInfo);
+                    var result = _comment.GetListByArticle(articleid, userInfo);
                     resultcode = result.ResultCode;
                     resultmessage = result.Message;
                     resultval = result.IsSuccess;
                     resultobj = result.Object;
                     if (result.IsSuccess)
                     {
-                        _memcache.Set<List<Articles>>("ArticlesByWriters" + writerid, resultobj);
+                        _memcache.Set<List<Comments>>("CommentsByArticle" + articleid, resultobj);
                     }
                 }
                 else
@@ -197,9 +196,9 @@ namespace ArticleApi.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                _logs.Add(userInfo.SessId, ex.ToString(), "GetListByWriterId", "ArticleController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
+                _logs.Add(userInfo.SessId, ex.ToString(), "GetListByArticleId", "CommentsController", Enum.GetName(typeof(LayerInfo), 1), "", userInfo.ClientIp, userInfo.UsrId);
             }
-            return new ObjResult<List<Articles>>(resultval, resultmessage, resultcode, resultobj);
+            return new ObjResult<List<Comments>>(resultval, resultmessage, resultcode, resultobj);
         }
     }
 }
