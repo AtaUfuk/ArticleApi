@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ArticleApi.DAL.Migrations
 {
     [DbContext(typeof(ArticleApiDbContext))]
-    [Migration("20201129144141_update-log-table2")]
-    partial class updatelogtable2
+    [Migration("20201129195817_create-db")]
+    partial class createdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -156,10 +156,7 @@ namespace ArticleApi.DAL.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ArticlesId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CommenterId")
+                    b.Property<int>("CommenterId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -185,8 +182,6 @@ namespace ArticleApi.DAL.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ArticlesId");
 
                     b.HasIndex("CommenterId");
 
@@ -344,43 +339,20 @@ namespace ArticleApi.DAL.Migrations
 
             modelBuilder.Entity("ArticleApi.Data.Entities.Concrete.Articles", b =>
                 {
-                    b.HasOne("ArticleApi.Data.Entities.Concrete.Writers", "Writer")
-                        .WithMany("Articles")
+                    b.HasOne("ArticleApi.Data.Entities.Concrete.Writers", null)
+                        .WithMany()
                         .HasForeignKey("WriterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Writer");
                 });
 
             modelBuilder.Entity("ArticleApi.Data.Entities.Concrete.Comments", b =>
                 {
-                    b.HasOne("ArticleApi.Data.Entities.Concrete.Articles", "Articles")
-                        .WithMany("Comments")
-                        .HasForeignKey("ArticlesId");
-
-                    b.HasOne("ArticleApi.Data.Entities.Concrete.Commenters", "Commenter")
-                        .WithMany("Comments")
-                        .HasForeignKey("CommenterId");
-
-                    b.Navigation("Articles");
-
-                    b.Navigation("Commenter");
-                });
-
-            modelBuilder.Entity("ArticleApi.Data.Entities.Concrete.Articles", b =>
-                {
-                    b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("ArticleApi.Data.Entities.Concrete.Commenters", b =>
-                {
-                    b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("ArticleApi.Data.Entities.Concrete.Writers", b =>
-                {
-                    b.Navigation("Articles");
+                    b.HasOne("ArticleApi.Data.Entities.Concrete.Commenters", null)
+                        .WithMany()
+                        .HasForeignKey("CommenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

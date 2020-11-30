@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ArticleApi.DAL.Migrations
 {
-    public partial class CreateDb : Migration
+    public partial class createdb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -35,11 +35,14 @@ namespace ArticleApi.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    SessionId = table.Column<string>(type: "nvarchar(80)", maxLength: 80, nullable: true),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LogMethod = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LogPage = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    LogLayer = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: true),
                     Link = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    LogIp = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
@@ -92,6 +95,32 @@ namespace ArticleApi.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CommenterId = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedUserId = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifiedUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_Commenters_CommenterId",
+                        column: x => x.CommenterId,
+                        principalTable: "Commenters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Articles",
                 columns: table => new
                 {
@@ -125,48 +154,10 @@ namespace ArticleApi.DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Comments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Active = table.Column<bool>(type: "bit", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    CreatedUserId = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedUserId = table.Column<int>(type: "int", nullable: true),
-                    CommenterId = table.Column<int>(type: "int", nullable: true),
-                    ArticlesId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Comments_Articles_ArticlesId",
-                        column: x => x.ArticlesId,
-                        principalTable: "Articles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Comments_Commenters_CommenterId",
-                        column: x => x.CommenterId,
-                        principalTable: "Commenters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Articles_WriterId",
                 table: "Articles",
                 column: "WriterId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comments_ArticlesId",
-                table: "Comments",
-                column: "ArticlesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_CommenterId",
@@ -177,6 +168,9 @@ namespace ArticleApi.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Articles");
+
+            migrationBuilder.DropTable(
                 name: "Comments");
 
             migrationBuilder.DropTable(
@@ -186,13 +180,10 @@ namespace ArticleApi.DAL.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Articles");
+                name: "Writers");
 
             migrationBuilder.DropTable(
                 name: "Commenters");
-
-            migrationBuilder.DropTable(
-                name: "Writers");
         }
     }
 }

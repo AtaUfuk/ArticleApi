@@ -12,7 +12,7 @@ namespace ArticleApi.DAL.DataMap
         public void Configure(EntityTypeBuilder<Articles> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.HasOne<Writers>(x => x.Writer).WithMany(x => x.Articles).HasForeignKey(x => x.WriterId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne<Writers>().WithMany().HasForeignKey(x => x.WriterId).OnDelete(DeleteBehavior.Cascade).IsRequired();
             builder.Property(x => x.Title).HasMaxLength(255);
             builder.Property(x => x.ShortDescription).HasMaxLength(500);
             builder.Property(x => x.Content);

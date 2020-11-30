@@ -51,7 +51,7 @@ namespace ArticleApi.Business.Managers
             try
             {
                 Articles model = _repos.Get(x => x.Id == id);
-                if(model!=null)
+                if (model != null)
                 {
                     model.Active = false;
                     model.Deleted = true;
@@ -67,7 +67,7 @@ namespace ArticleApi.Business.Managers
                     _code = StaticValues.ErrorNullObjCode;
                     _resultMessage = StaticValues.ErrorNullObjMessage;
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace ArticleApi.Business.Managers
             try
             {
                 _resultentity = _repos.Get(x => x.Id == id);
-                if(_resultentity!=null)
+                if (_resultentity != null)
                 {
                     _code = StaticValues.SuccessCode;
                     _resultMessage = StaticValues.SuccessMessage;
@@ -105,7 +105,7 @@ namespace ArticleApi.Business.Managers
                 _code = StaticValues.ErrorCode;
                 _resultMessage = StaticValues.ErrorMessage;
             }
-            return new ObjResult<Articles>(_resultval, _resultentity);
+            return new ObjResult<Articles>(_resultval, _resultMessage, _code, _resultentity);
         }
 
         public IObjResult<List<Articles>> GetListByWriter(int writerid, AutUserInfo userInfo)

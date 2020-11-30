@@ -1,6 +1,5 @@
 ﻿using ArticleApi.Core.Entities;
 using System;
-using System.Collections.Generic;
 
 namespace ArticleApi.Data.Entities.Concrete
 {
@@ -17,6 +16,5 @@ namespace ArticleApi.Data.Entities.Concrete
         public int CreatedUserId { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public int? ModifiedUserId { get; set; }
-        public ICollection<Comments> Comments { get; set; }
     }
 }

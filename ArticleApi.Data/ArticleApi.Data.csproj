@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Entities\Concrete\Articles.cs~RF19f56f7.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ArticleApi.Core\ArticleApi.Core.csproj" />
   </ItemGroup>
 

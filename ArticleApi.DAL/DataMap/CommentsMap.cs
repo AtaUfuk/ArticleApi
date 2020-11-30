@@ -9,6 +9,7 @@ namespace ArticleApi.DAL.DataMap
         public void Configure(EntityTypeBuilder<Comments> builder)
         {
             builder.HasKey(x => x.Id);
+            builder.HasOne<Commenters>().WithMany().HasForeignKey(x => x.CommenterId).IsRequired();
             builder.Property(x => x.Content);
             builder.Property(x => x.Active);
             builder.Property(x => x.Deleted);
