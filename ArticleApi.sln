@@ -15,11 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArticleApi.Data", "ArticleA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArticleApi.Business", "ArticleApi.Business\ArticleApi.Business.csproj", "{A6A7B103-CAEE-4C92-96AF-4C6D5B823549}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DbScripts", "DbScripts", "{D700DF89-6C5F-4FEE-B6C4-DFDA0695A014}"
-	ProjectSection(SolutionItems) = preProject
-		C:\Users\Vegeta\Documents\ArticleApiDb.sql = C:\Users\Vegeta\Documents\ArticleApiDb.sql
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
