@@ -107,7 +107,7 @@ namespace ArticleApi.WebApi.Controllers
             {
                 _resultMessage = StaticValues.ErrorMessage;
                 _resultCode = StaticValues.ErrorCode;
-                _logs.Add(_sessionid, "Kullanıcı oturum açma işlemi esnasında bir sorun ile karşılaşıldı. Hata:" + ex.ToString(), "AuthUser", "UserController", Enum.GetName(typeof(LayerInfo), 1), _httpContext.HttpContext.Request.Path, clientip, StaticValues.DefUserId);
+                _logs.Add(_sessionid, "Kullanıcı oturum açma işlemi esnasında bir sorun ile karşılaşıldı. Hata:" + ex.ToString(), "CreateUser", "UserController", Enum.GetName(typeof(LayerInfo), 1), _httpContext.HttpContext.Request.Path, clientip, StaticValues.DefUserId);
             }
 
             return new Result(_resultValue, _resultMessage, _resultCode);

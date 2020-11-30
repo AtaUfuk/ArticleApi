@@ -4,8 +4,8 @@
     {
         public enum LayerInfo 
         {
-            WebUI,
-            Business
+            WebUI=1,
+            Business=2
         }
     }
 }

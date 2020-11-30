@@ -16,6 +16,8 @@ namespace ArticleApi.Business.DependecyResolvers.Autofac
             builder.RegisterType<ArticlesDal>().As<IArticlesDal>();
             builder.RegisterType<LogsManager>().As<ILogsService>();
             builder.RegisterType<LogsDal>().As<ILogsDal>();
+            builder.RegisterType<WritersManager>().As<IWritersService>();
+            builder.RegisterType<WritersDal>().As<IWritersDal>();
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<UsersDal>().As<IUsersDal>();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
